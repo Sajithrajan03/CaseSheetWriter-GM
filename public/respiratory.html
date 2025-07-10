@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respiratory System Case Sheet</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="respiratory.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="respiratory-generator.js"></script>
+    <script src="respiratory.js"></script>
+    <style>
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            transition: all 0.15s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+
+        .btn-primary i {
+            margin-right: 0.5rem;
+        }
+
+        #provisional_diagnosis {
+            font-size: 1.1rem;
+            padding: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            width: 100%;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Respiratory System Case Sheet</h1>
+            <p>Generate well-formatted respiratory system case sheets</p>
+        </header>
+
+        <main>
+            <form id="caseSheetForm">
+                <a href="../index.html" class="back-button">
+                    <span class="back-icon">←</span>
+                    Back to Subjects
+                </a>
+
+                <!-- Patient Demographics -->
+                <div class="form-section" id="demographics">
+                    <h2>Patient Demographics</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="name">Patient Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="age">Age:</label>
+                            <input type="number" id="age" name="age" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sex">Sex:</label>
+                            <select id="sex" name="sex" required>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="residence">Residence:</label>
+                            <input type="text" id="residence" name="residence" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="occupation">Occupation:</label>
+                            <input type="text" id="occupation" name="occupation" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="marital_status">Marital Status:</label>
+                            <select id="marital_status" name="marital_status" required>
+                                <option value="married">Married</option>
+                                <option value="unmarried">Unmarried</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chief Complaints -->
+                <div class="form-section">
+                    <h2>Chief Complaints</h2>
+                    <div class="complaint-selector">
+                        <h3>Select Complaints</h3>
+                        <div class="complaint-list">
+                            <div class="complaint-item" data-complaint="Cough">Cough</div>
+                            <div class="complaint-item" data-complaint="Fever">Fever</div>
+                            <div class="complaint-item" data-complaint="Breathlessness">Breathlessness</div>
+                            <div class="complaint-item" data-complaint="Chest Pain">Chest Pain</div>
+                            <div class="complaint-item" data-complaint="Hemoptysis">Hemoptysis</div>
+                            <div class="complaint-item" data-complaint="Wheeze">Wheeze</div>
+                            <div class="complaint-item" data-complaint="Loss of Weight">Loss of Weight</div>
+                            <div class="complaint-item" data-complaint="Loss of Appetite">Loss of Appetite</div>
+                        </div>
+                    </div>
+                    <div id="selectedComplaints"></div>
+                    <button type="button" id="addCustomComplaint">+ Add Custom Complaint</button>
+                </div>
+
+                <!-- History of Presenting Illness -->
+                <div class="form-section">
+                    <h2>History of Presenting Illness</h2>
+                    <div class="history-tabs">
+                        <div class="tab-header" id="tabHeader">
+                            <button type="button" class="tab-button" id="addHistoryTab">+ Add Complaint History</button>
+                        </div>
+                        <div id="tabContents"></div>
+                    </div>
+                </div>
+
+                <!-- Negative History Section -->
+                <div class="section">
+                    <h3>Negative History</h3>
+                    <div class="negative-history">
+                        <!-- TB Section -->
+                        <div class="history-category">
+                            <h4>TB</h4>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox"> H/O fever with evening rise of temperature</label>
+                                <label><input type="checkbox"> H/O loss of weight</label>
+                                <label><input type="checkbox"> H/O loss of appetite</label>
+                                <label><input type="checkbox"> H/O night sweats</label>
+                            </div>
+                        </div>
+
+                        <!-- CVS Section -->
+                        <div class="history-category">
+                            <h4>CVS</h4>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox"> H/O pedal edema</label>
+                                <label><input type="checkbox"> H/O abdominal distention</label>
+                                <label><input type="checkbox"> H/O right hypocondrial pain</label>
+                                <label><input type="checkbox"> H/O puffiness of face</label>
+                                <label><input type="checkbox"> H/O palpitation</label>
+                                <label><input type="checkbox"> H/O syncope</label>
+                                <label><input type="checkbox"> H/O hoarseness of voice</label>
+                                <label><input type="checkbox"> H/O oliguria</label>
+                    </div>
+                        </div>
+
+                        <!-- Malignancy Section -->
+                        <div class="history-category">
+                            <h4>MALIGNANCY</h4>
+                        <div class="checkbox-group">
+                                <label><input type="checkbox"> H/O dysphagia</label>
+                                <label><input type="checkbox"> H/O Hoarseness of voice</label>
+                                <label><input type="checkbox"> H/O loss of weight</label>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                <!-- Past History Section -->
+                <div class="section">
+                    <h3>Past History</h3>
+                    <div class="past-history-list">
+                        <!-- Past history items will be added here -->
+                    </div>
+                    <div class="past-history-controls">
+                        <div class="past-history-grid">
+                            <div class="past-history-category">
+                                <h4>Common History</h4>
+                                <div class="clickable-items">
+                                    <div class="clickable-item" data-history="previous_episodes">H/O similar illness</div>
+                                    <div class="clickable-item" data-history="dm_ht_ba">H/O DM, HT</div>
+                                    <div class="clickable-item" data-history="asthma">H/O Bronchial Asthma</div>
+                                    <div class="clickable-item" data-history="seizures">H/O Seizures</div>
+                                    <div class="clickable-item" data-history="surgery">H/O Surgery</div>
+                                    <div class="clickable-item" data-history="blood_transfusion">H/O Blood Transfusion</div>
+                                    <div class="clickable-item" data-history="tb">H/O TB (Any contact, Age, Treatment failure)</div>
+                                    <div class="clickable-item" data-history="custom">Add Custom History</div>
+                                </div>
+                            </div>
+
+                            <div class="past-history-category">
+                                <h4>Pneumonia Related</h4>
+                                <div class="clickable-items">
+                                    <div class="clickable-item" data-history="pneumonia">H/O suggestive of pneumonia</div>
+                                    <div class="clickable-item" data-history="aspiration">Aspiration (ABCDEF)</div>
+                                    <div class="clickable-item" data-history="exanthematous">Exanthematous fever</div>
+                                </div>
+                            </div>
+
+                            <div class="past-history-category">
+                                <h4>Procedures & Conditions</h4>
+                                <div class="clickable-items">
+                                    <div class="clickable-item" data-history="dental">Tooth extraction, Tonsillectomy</div>
+                                    <div class="clickable-item" data-history="allergy">Allergy</div>
+                                    <div class="clickable-item" data-history="trauma">Trauma</div>
+                                    <div class="clickable-item" data-history="std">Exposure to STD's</div>
+                                    <div class="clickable-item" data-history="anesthesia">General anaesthesia</div>
+                                </div>
+                            </div>
+
+                            <div class="past-history-category">
+                                <h4>Other Conditions</h4>
+                                <div class="clickable-items">
+                                    <div class="clickable-item" data-history="pleural">H/O suggestive of Pleural effusion</div>
+                                    <div class="clickable-item" data-history="abdominal">Acute abdominal distress</div>
+                                    <div class="clickable-item" data-history="infections">H/O suggestive of past infections</div>
+                                    <div class="clickable-item" data-history="childhood">Measles, whooping cough</div>
+                                    <div class="clickable-item" data-history="recurrent">Recurrent respiratory infection</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menstrual History Section -->
+                <div class="section" id="menstrualHistorySection" style="display: none;">
+                    <h3>Menstrual History</h3>
+                    <div class="form-group">
+                        <textarea id="menstrualHistory" name="menstrualHistory" rows="4" style="width: 100%; padding: 10px;"></textarea>
+                    </div>
+                </div>
+
+                <!-- Personal History Section -->
+                <div class="section">
+                    <h3>Personal History</h3>
+                    <div class="personal-history-grid">
+                        <div class="personal-history-item">
+                            <h4>Diet</h4>
+                            <div class="radio-group">
+                                <label><input type="radio" name="diet" value="Vegetarian"> Vegetarian</label>
+                                <label><input type="radio" name="diet" value="Mixed"> Mixed</label>
+                                <label><input type="radio" name="diet" value="Regular"> Regular</label>
+                                <label><input type="radio" name="diet" value="Irregular"> Irregular</label>
+                            </div>
+                        </div>
+                        <div class="personal-history-item">
+                            <h4>Sleep</h4>
+                            <div class="radio-group">
+                                <label><input type="radio" name="sleep" value="Normal"> Normal</label>
+                                <label><input type="radio" name="sleep" value="Disturbed"> Disturbed</label>
+                                <label><input type="radio" name="sleep" value="Insomnia"> Insomnia</label>
+                            </div>
+                        </div>
+                        <div class="personal-history-item">
+                            <h4>Bowel & Bladder</h4>
+                            <div class="radio-group">
+                                <label><input type="radio" name="bowel" value="Regular"> Regular</label>
+                                <label><input type="radio" name="bowel" value="Irregular"> Irregular</label>
+                                <label><input type="radio" name="bowel" value="Constipation"> Constipation</label>
+                            </div>
+                        </div>
+                        <div class="personal-history-item">
+                            <h4>Drug & Allergy History</h4>
+                            <div class="form-group">
+                                <textarea id="drugAllergyHistory" rows="3" style="width: 100%; padding: 10px; font-size: 14px; line-height: 1.5;">No history of allergy to any drugs</textarea>
+                            </div>
+                        </div>
+                        <div class="personal-history-item">
+                            <h4>Smoking History</h4>
+                            <div class="form-group" id="smokingHistoryGroup" style="display: none;">
+                                <div style="margin-bottom: 10px;">
+                                    <label>Duration of smoking (years):</label>
+                                    <input type="number" id="smokingDuration" min="0" style="width: 100px;">
+                                </div>
+                                <div style="margin-bottom: 10px;">
+                                    <label>Number of cigarettes/beedis per day:</label>
+                                    <input type="number" id="cigarettesPerDay" min="0" style="width: 100px;" placeholder="e.g. 20 for one pack">
+                                </div>
+                                <div id="smokingCalculations" style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin-top: 10px; display: none;">
+                                    <div><strong>Smoking Index:</strong> <span id="smokingIndex">0</span></div>
+                                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">* Smoking index = cigarettes per day × years<br>* Smoking index > 300 is a risk factor for bronchogenic carcinoma</div>
+                                    <div><strong>Pack Years:</strong> <span id="packYears">0</span></div>
+                                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">* Pack years = (cigarettes per day ÷ 20) × years<br>* Pack years > 40 increases risk of bronchogenic carcinoma<br>* 1 pack = 20 cigarettes</div>
+                                </div>
+                            </div>
+                            <div class="radio-group">
+                                <label><input type="radio" name="smoking" value="Never" checked> Never smoked</label>
+                                <label><input type="radio" name="smoking" value="Current"> Current smoker</label>
+                                <label><input type="radio" name="smoking" value="Former"> Former smoker</label>
+                            </div>
+                        </div>
+                        <div class="habits-and-exposure-grid">
+                            <div class="personal-history-item habits-section">
+                                <h4>Other Habits</h4>
+                                <div class="checkbox-grid">
+                                    <label class="checkbox-item small"><input type="checkbox" name="habits" value="Alcohol" class="habit-checkbox"><span>Alcohol</span></label>
+                                    <label class="checkbox-item small"><input type="checkbox" name="habits" value="BetelNut" class="habit-checkbox"><span>Betel Nut/Tobacco Chewing</span></label>
+                                    <label class="checkbox-item small"><input type="checkbox" name="habits" value="Other" class="habit-checkbox"><span>Other Addictions</span></label>
+                                    <label class="checkbox-item small"><input type="checkbox" name="habits" value="None" class="habit-checkbox" checked><span>None</span></label>
+                                </div>
+                            </div>
+                            <div class="personal-history-item exposure-section">
+                                <h4>Exposure</h4>
+                                <div class="radio-group small">
+                                    <label><input type="radio" name="exposure" value="None" checked> None</label>
+                                <label><input type="radio" name="exposure" value="STD"> STD</label>
+                                    <label><input type="radio" name="exposure" value="Occupational"> Occupational</label>
+                            </div>
+                                <div id="occupationalDetails" style="display: none; margin-top: 8px;">
+                                    <h5>Occupational Exposure Type:</h5>
+                                    <div class="checkbox-grid">
+                                        <label class="checkbox-item small"><input type="checkbox" name="exposure_type" value="Asbestos"><span>Asbestos</span></label>
+                                        <label class="checkbox-item small"><input type="checkbox" name="exposure_type" value="AromaticAmines"><span>Aromatic Amines</span></label>
+                                        <label class="checkbox-item small"><input type="checkbox" name="exposure_type" value="MineWorker"><span>Mine Worker</span></label>
+                                        <label class="checkbox-item small"><input type="checkbox" name="exposure_type" value="Other"><span>Other</span></label>
+                        </div>
+                    </div>
+                            </div>
+                            <style>
+                                .habits-and-exposure-grid {
+                                    display: grid;
+                                    grid-template-columns: repeat(2, 1fr);
+                                    gap: 15px;
+                                    align-items: start;
+                                }
+                                .checkbox-grid {
+                                    display: grid;
+                                    grid-template-columns: repeat(2, 1fr);
+                                    gap: 6px;
+                                    margin-top: 6px;
+                                }
+                                .checkbox-item.small {
+                                    padding: 4px 8px;
+                                    min-height: 28px;
+                                }
+                                .checkbox-item.small input[type="checkbox"],
+                                .radio-group.small input[type="radio"] {
+                                    width: 14px;
+                                    height: 14px;
+                                    margin-right: 6px;
+                                }
+                                .checkbox-item.small span {
+                                    font-size: 12px;
+                                }
+                                .radio-group.small label {
+                                    padding: 4px 8px;
+                                    min-height: 28px;
+                                    font-size: 12px;
+                                }
+                                h4, h5 {
+                                    font-size: 13px;
+                                    margin-bottom: 4px;
+                                }
+                            </style>
+                            <script>
+                                // Handle the "None" checkbox interaction
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const habitCheckboxes = document.querySelectorAll('.habit-checkbox');
+                                    const noneCheckbox = document.querySelector('.habit-checkbox[value="None"]');
+
+                                    // When "None" is checked, uncheck others
+                                    noneCheckbox.addEventListener('change', function() {
+                                        if (this.checked) {
+                                            habitCheckboxes.forEach(checkbox => {
+                                                if (checkbox !== this) {
+                                                    checkbox.checked = false;
+                                                }
+                                            });
+                                        }
+                                    });
+
+                                    // When others are checked, uncheck "None"
+                                    habitCheckboxes.forEach(checkbox => {
+                                        if (checkbox !== noneCheckbox) {
+                                            checkbox.addEventListener('change', function() {
+                                                if (this.checked) {
+                                                    noneCheckbox.checked = false;
+                                                }
+                                                // If no other checkboxes are checked, check "None"
+                                                const anyChecked = Array.from(habitCheckboxes)
+                                                    .some(cb => cb !== noneCheckbox && cb.checked);
+                                                if (!anyChecked) {
+                                                    noneCheckbox.checked = true;
+                                                }
+                                            });
+                                        }
+                                    });
+                                });
+                            </script>
+                            <script>
+                                // Show/hide occupational details based on radio selection
+                                document.querySelectorAll('input[name="exposure"]').forEach(radio => {
+                                    radio.addEventListener('change', function() {
+                                        const occupationalDetails = document.getElementById('occupationalDetails');
+                                        occupationalDetails.style.display = this.value === 'Occupational' ? 'block' : 'none';
+                                        if (this.value !== 'Occupational') {
+                                            // Clear checkboxes when not showing
+                                            document.querySelectorAll('input[name="exposure_type"]').forEach(cb => cb.checked = false);
+                                        }
+                                    });
+                                });
+                            </script>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        // Smoking history calculations
+                        document.querySelectorAll('input[name="smoking"]').forEach(radio => {
+                            radio.addEventListener('change', function() {
+                                const smokingHistoryGroup = document.getElementById('smokingHistoryGroup');
+                                smokingHistoryGroup.style.display = (this.value === 'Current' || this.value === 'Former') ? 'block' : 'none';
+                                if (this.value === 'Never') {
+                                    document.getElementById('smokingDuration').value = '';
+                                    document.getElementById('packetsPerDay').value = '';
+                                    document.getElementById('smokingCalculations').style.display = 'none';
+                                }
+                            });
+                        });
+
+                        // Calculate smoking index and pack years
+                        function updateSmokingCalculations() {
+                            const duration = parseFloat(document.getElementById('smokingDuration').value) || 0;
+                            const cigarettesPerDay = parseFloat(document.getElementById('cigarettesPerDay').value) || 0;
+                            
+                            // Calculate smoking index (cigarettes per day × years)
+                            const smokingIndex = Math.round(cigarettesPerDay * duration);
+                            
+                            // Calculate pack years ((cigarettes per day ÷ 20) × years)
+                            const packYears = Math.round((cigarettesPerDay / 20) * duration * 10) / 10; // Round to 1 decimal
+                            
+                            const smokingIndexSpan = document.getElementById('smokingIndex');
+                            smokingIndexSpan.textContent = smokingIndex;
+                            smokingIndexSpan.style.color = smokingIndex > 300 ? '#d32f2f' : 'inherit'; // Red if > 300
+                            
+                            const packYearsSpan = document.getElementById('packYears');
+                            packYearsSpan.textContent = packYears;
+                            packYearsSpan.style.color = packYears > 40 ? '#d32f2f' : 'inherit'; // Red if > 40
+                            
+                            document.getElementById('smokingCalculations').style.display = (duration && cigarettesPerDay) ? 'block' : 'none';
+                        }
+
+                        document.getElementById('smokingDuration').addEventListener('input', updateSmokingCalculations);
+                        document.getElementById('cigarettesPerDay').addEventListener('input', updateSmokingCalculations);
+                    </script>
+                </div>
+
+                <!-- Treatment History Section -->
+                <div class="section">
+                    <h3>Treatment History</h3>
+                    <div class="form-group">
+                        <textarea id="treatmentHistory" name="treatmentHistory" rows="4" style="width: 100%; padding: 10px;">no relevant treatment history seen</textarea>
+                    </div>
+                </div>
+
+                <!-- Contact History Section -->
+                <div class="section">
+                    <h3>Contact History</h3>
+                        <div class="form-group">
+                        <textarea id="contactHistory" name="contactHistory" rows="4" style="width: 100%; padding: 10px;">no relevant history of contact noted</textarea>
+                        </div>
+                </div>
+
+                <!-- Family History Section -->
+                <div class="section">
+                    <h3>Family History</h3>
+                    <div class="form-group">
+                        <textarea id="familyHistory" name="familyHistory" rows="3" style="width: 100%; padding: 10px;">no history of similar illness in the family members</textarea>
+                    </div>
+                </div>
+                
+                <!-- General Examination Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h3>General Examination</h3>
+                        <button type="button" class="autofill-btn" onclick="autofillGeneralExam()">
+                            <i class="fas fa-magic"></i> Autofill Normal Values
+                        </button>
+                    </div>
+                    <div class="general-exam-grid">
+                        <div class="exam-item">
+                            <h4>Consciousness</h4>
+                            <div class="radio-group">
+                                <label><input type="radio" name="consciousness"> Conscious, well oriented to time, place and person</label>
+                                <label><input type="radio" name="consciousness"> Conscious, disoriented</label>
+                                <label><input type="radio" name="consciousness"> Drowsy but arousable</label>
+                                <label><input type="radio" name="consciousness"> Stuporous</label>
+                                <label><input type="radio" name="consciousness"> Comatose</label>
+                            </div>
+                        </div>
+
+                        <div class="exam-item">
+                            <h4>General Condition</h4>
+                            <div class="radio-group">
+                                <label><input type="radio" name="comfortable"> Comfortable at rest</label>
+                                <label><input type="radio" name="comfortable"> Comfortable only in sitting position</label>
+                                <label><input type="radio" name="comfortable"> Distressed</label>
+                                <label><input type="radio" name="comfortable"> Severely distressed</label>
+                            </div>
+                        </div>
+
+                        <div class="exam-item">
+                            <h4>Temperature</h4>
+                            <div class="radio-group">
+                                <label><input type="radio" name="temperature"> Afebrile</label>
+                                <label><input type="radio" name="temperature"> Febrile</label>
+                            </div>
+                            <div class="exam-details" id="feverDetails">
+                                <input type="text" placeholder="Temperature in °F">
+                                <select class="mt-2">
+                                    <option value="">Select Pattern</option>
+                                    <option value="continuous">Continuous</option>
+                                    <option value="intermittent">Intermittent</option>
+                                    <option value="remittent">Remittent</option>
+                                    <option value="hectic">Hectic</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="exam-item">
+                            <h4>Built and Nutrition</h4>
+                            <div class="radio-group">
+                                <label><input type="radio" name="built"> Well built and nourished</label>
+                                <label><input type="radio" name="built"> Moderately built and nourished</label>
+                                <label><input type="radio" name="built"> Poorly built and nourished</label>
+                                <label><input type="radio" name="built"> Cachectic</label>
+                            </div>
+                        </div>
+
+                        <div class="exam-item">
+                            <h4>Pallor</h4>
+                            <select class="exam-select">
+                                <option value="">Select Grade</option>
+                                <option value="no">No Pallor</option>
+                                <option value="1+">Grade 1+ (Mild)</option>
+                                <option value="2+">Grade 2+ (Moderate)</option>
+                                <option value="3+">Grade 3+ (Severe)</option>
+                                <option value="4+">Grade 4+ (Very Severe)</option>
+                            </select>
+                        </div>
+
+                        <div class="exam-item">
+                            <h4>Jaundice</h4>
+                            <select class="exam-select">
+                                <option value="">Select Grade</option>
+                                <option value="no">No Jaundice</option>
+                                <option value="1+">Grade 1+ (Seen in sclera only)</option>
+                                <option value="2+">Grade 2+ (Sclera and skin)</option>
+                                <option value="3+">Grade 3+ (Deep yellow)</option>
+                                <option value="4+">Grade 4+ (Deep yellow with greenish tint)</option>
+                            </select>
+                        </div>
+
+                        <div class="exam-item">
+                            <h4>Clubbing</h4>
+                            <select class="exam-select">
+                                <option value="">Select Grade</option>
+                                <option value="no">No Clubbing</option>
+                                <option value="1">Grade 1 (Loss of normal angle between nail and nail bed)</option>
+                                <option value="2">Grade 2 (Increased convexity of nail)</option>
+                                <option value="3">Grade 3 (Terminal segment floating)</option>
+                                <option value="4">Grade 4 (Drumstick appearance)</option>
+                                <option value="5">Grade 5 (Hypertrophic osteoarthropathy)</option>
+                            </select>
+                        </div>
+
+                        <div class="exam-item">
+                            <h4>Cyanosis</h4>
+                            <select class="exam-select">
+                                <option value="">Select Type</option>
+                                <option value="no">No Cyanosis</option>
+                                <option value="central">Central Cyanosis</option>
+                                <option value="peripheral">Peripheral Cyanosis</option>
+                                <option value="both">Both Central and Peripheral</option>
+                            </select>
+                        </div>
+
+                        <div class="exam-item">
+                            <h4>Pedal Edema</h4>
+                            <select class="exam-select">
+                                <option value="">Select Grade</option>
+                                <option value="no">No Edema</option>
+                                <option value="1+">Grade 1+ (Mild - ankle only)</option>
+                                <option value="2+">Grade 2+ (Moderate - below knee)</option>
+                                <option value="3+">Grade 3+ (Severe - above knee)</option>
+                                <option value="4+">Grade 4+ (Very Severe - generalized)</option>
+                            </select>
+                            <select class="exam-select mt-2">
+                                <option value="">Select Type</option>
+                                <option value="pitting">Pitting</option>
+                                <option value="non-pitting">Non-pitting</option>
+                            </select>
+                        </div>
+
+                        <div class="exam-item">
+                            <h4>Lymphadenopathy</h4>
+                            <div class="radio-group">
+                                <label><input type="radio" name="lymphadenopathy" value="no" checked> No Significant Lymphadenopathy</label>
+                                <label><input type="radio" name="lymphadenopathy" value="yes"> Present</label>
+                            </div>
+                            <div class="exam-details" id="lymphNodeDetails" style="display: none;">
+                                <div class="mt-2">
+                                    <label>Location (Select all that apply):</label>
+                                    <div class="checkbox-group lymph-locations">
+                                        <label><input type="checkbox" name="lymphNodes" value="cervical"> Cervical</label>
+                                        <label><input type="checkbox" name="lymphNodes" value="axillary"> Axillary</label>
+                                        <label><input type="checkbox" name="lymphNodes" value="inguinal"> Inguinal</label>
+                                        <label><input type="checkbox" name="lymphNodes" value="submandibular"> Submandibular</label>
+                                        <label><input type="checkbox" name="lymphNodes" value="supraclavicular"> Supraclavicular</label>
+                                        <label><input type="checkbox" name="lymphNodes" value="submental"> Submental</label>
+                                        <label><input type="checkbox" name="lymphNodes" value="occipital"> Occipital</label>
+                                        <label><input type="checkbox" name="lymphNodes" value="preauricular"> Preauricular</label>
+                                        <label><input type="checkbox" name="lymphNodes" value="postauricular"> Postauricular</label>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <label>Type:</label>
+                                    <select class="exam-select" id="lymphNodeType">
+                                        <option value="">Select Type</option>
+                                        <option value="generalized">Generalized</option>
+                                        <option value="localized">Localized</option>
+                            </select>
+                                </div>
+                            <div class="mt-2">
+                                    <label>Size:</label>
+                                    <input type="text" id="lymphNodeSize" placeholder="Size in cm">
+                                </div>
+                                <div class="mt-2">
+                                    <label>Characteristics (Select multiple):</label>
+                                    <select class="exam-select" id="lymphNodeCharacteristics" multiple>
+                                    <option value="discrete">Discrete</option>
+                                    <option value="matted">Matted</option>
+                                    <option value="tender">Tender</option>
+                                    <option value="non-tender">Non-tender</option>
+                                    <option value="firm">Firm</option>
+                                    <option value="hard">Hard</option>
+                                        <option value="mobile">Mobile</option>
+                                        <option value="fixed">Fixed</option>
+                                </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="exam-item">
+                            <h4>Halitosis</h4>
+                            <select class="exam-select">
+                                <option value="">Select</option>
+                                <option value="no">Not Present</option>
+                                <option value="mild">Mild</option>
+                                <option value="moderate">Moderate</option>
+                                <option value="severe">Severe</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Vitals Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h3>Vitals</h3>
+                        <button type="button" class="autofill-btn" onclick="autofillVitals()">
+                            <i class="fas fa-magic"></i> Autofill Normal Values
+                        </button>
+                    </div>
+                    <div class="vitals-grid">
+                        <!-- Pulse -->
+                        <div class="vital-item">
+                            <h4>Pulse</h4>
+                            <div class="vital-row">
+                                <div class="vital-input">
+                                    <input type="number" id="pulseRate" placeholder="Rate">
+                                    <span class="vital-unit">beats/minute</span>
+                                </div>
+                            </div>
+                            <div class="vital-characteristics">
+                                <div class="radio-group">
+                                    <label>Rate</label>
+                                    <label><input type="radio" name="pulseRate" value="Regular"> Regular</label>
+                                    <label><input type="radio" name="pulseRate" value="Irregular"> Irregular</label>
+                                </div>
+                                <div class="radio-group">
+                                    <label>Rhythm</label>
+                                    <label><input type="radio" name="pulseRhythm" value="Regular"> Regular</label>
+                                    <label><input type="radio" name="pulseRhythm" value="Irregular"> Irregular</label>
+                                </div>
+                                <div class="radio-group">
+                                    <label>Volume</label>
+                                    <label><input type="radio" name="pulseVolume" value="Normal"> Normal</label>
+                                    <label><input type="radio" name="pulseVolume" value="Low"> Low</label>
+                                    <label><input type="radio" name="pulseVolume" value="High"> High</label>
+                                </div>
+                                <div class="radio-group">
+                                    <label>Vessel Wall</label>
+                                    <label><input type="radio" name="vesselWall" value="Normal"> Normal</label>
+                                    <label><input type="radio" name="vesselWall" value="Thickened"> Thickened</label>
+                                </div>
+                            </div>
+                            <div class="vital-row mt-2">
+                                <div class="radio-group">
+                                    <label>Radio-radial Delay</label>
+                                    <label><input type="radio" name="radioRadial" value="Present"> Present</label>
+                                    <label><input type="radio" name="radioRadial" value="Absent"> Absent</label>
+                                </div>
+                                <div class="radio-group">
+                                    <label>Radio-femoral Delay</label>
+                                    <label><input type="radio" name="radioFemoral" value="Present"> Present</label>
+                                    <label><input type="radio" name="radioFemoral" value="Absent"> Absent</label>
+                                </div>
+                            </div>
+                            <div class="vital-row mt-2">
+                                <div class="radio-group" style="flex: 1;">
+                                    <label>Peripheral Vessels</label>
+                                    <label><input type="radio" name="peripheralVessels" value="Felt equally in all vessels"> Felt equally in all vessels</label>
+                                    <label><input type="radio" name="peripheralVessels" value="Diminished"> Diminished</label>
+                                    <label><input type="radio" name="peripheralVessels" value="Absent"> Absent</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Blood Pressure -->
+                        <div class="vital-item">
+                            <h4>Blood Pressure</h4>
+                            <div class="vital-row">
+                                <div class="vital-input">
+                                    <input type="number" placeholder="Systolic">
+                                    <span class="vital-unit">/</span>
+                                    <input type="number" placeholder="Diastolic">
+                                    <span class="vital-unit">mm Hg</span>
+                                </div>
+                            </div>
+                            <div class="vital-characteristics">
+                                <div class="radio-group">
+                                    <label>Position</label>
+                                    <label><input type="radio" name="bpPosition" value="Sitting"> Sitting</label>
+                                    <label><input type="radio" name="bpPosition" value="Supine"> Supine</label>
+                                    <label><input type="radio" name="bpPosition" value="Standing"> Standing</label>
+                                </div>
+                                <div class="radio-group">
+                                    <label>Arm</label>
+                                    <label><input type="radio" name="bpArm" value="Right"> Right</label>
+                                    <label><input type="radio" name="bpArm" value="Left"> Left</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Temperature -->
+                        <div class="vital-item">
+                            <h4>Temperature</h4>
+                            <div class="vital-row">
+                                <div class="vital-input">
+                                    <input type="number" step="0.1" placeholder="Temperature">
+                                    <span class="vital-unit">°F</span>
+                                </div>
+                            </div>
+                            <div class="vital-characteristics">
+                                <div class="radio-group">
+                                    <label>Method</label>
+                                    <label><input type="radio" name="tempMethod" value="Oral"> Oral</label>
+                                    <label><input type="radio" name="tempMethod" value="Axillary"> Axillary</label>
+                                    <label><input type="radio" name="tempMethod" value="Tympanic"> Tympanic</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SpO2 -->
+                        <div class="vital-item">
+                            <h4>SpO2</h4>
+                            <div class="vital-row">
+                                <div class="vital-input">
+                                    <input type="number" min="0" max="100" placeholder="Saturation">
+                                    <span class="vital-unit">%</span>
+                                </div>
+                            </div>
+                            <div class="vital-characteristics">
+                                <div class="radio-group">
+                                    <label>On Room Air</label>
+                                    <label><input type="radio" name="o2Support" value="Yes"> Yes</label>
+                                    <label><input type="radio" name="o2Support" value="No"> No</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Respiratory Rate -->
+                        <div class="vital-item">
+                            <h4>Respiratory Rate</h4>
+                            <div class="vital-row">
+                                    <div class="vital-input">
+                                    <input type="number" id="respiratoryRate" placeholder="Rate">
+                                    <span class="vital-unit">breaths/minute</span>
+                                    </div>
+                                </div>
+                            <div class="vital-characteristics">
+                                <div class="radio-group">
+                                    <label>Pattern</label>
+                                    <label><input type="radio" name="respiratoryPattern" value="Regular"> Regular</label>
+                                    <label><input type="radio" name="respiratoryPattern" value="Irregular"> Irregular</label>
+                                </div>
+                                <div class="radio-group">
+                                    <label>Depth</label>
+                                    <label><input type="radio" name="respiratoryDepth" value="Normal"> Normal</label>
+                                    <label><input type="radio" name="respiratoryDepth" value="Shallow"> Shallow</label>
+                                    <label><input type="radio" name="respiratoryDepth" value="Deep"> Deep</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- JVP -->
+                        <div class="vital-item">
+                            <h4>JVP</h4>
+                            <div class="vital-row">
+                                <div class="vital-input">
+                                    <input type="number" id="jvpValue" placeholder="JVP">
+                                    <span class="vital-unit">cm H2O</span>
+                                </div>
+                            </div>
+                            <div class="vital-characteristics">
+                                <div class="radio-group">
+                                    <label>Character</label>
+                                    <label><input type="radio" name="jvpCharacter" value="normal"> Normal</label>
+                                    <label><input type="radio" name="jvpCharacter" value="elevated"> Elevated</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Systemic Examination Section -->
+                <div class="section">
+                    <h2>Systemic Examination of Respiratory System</h2>
+                    
+                    <!-- Inspection Subsection -->
+                    <div class="subsection">
+                        <div class="section-header">
+                            <h3>INSPECTION</h3>
+                        </div>
+                        
+                        <!-- Combined Inspection Findings -->
+                        <div class="exam-group">
+                            <div class="exam-item">
+                                <textarea id="inspectionFindings" class="form-control inspection-textarea" rows="15" style="width: 100%; padding: 10px; font-size: 14px; line-height: 1.6;">UPPER RESPIRATORY TRACT EXAMINATION
+Contours of nose normal
+No deviation of nasal septum
+No nasal polyp
+No sinus and tenderness
+
+Examination of Oral cavity
+No staining of teeth
+No dental caries
+Posterior pharyngeal wall normal
+
+LOWER RESPIRATORY TRACT EXAMINATION
+Chest wall appears to be symmetrical
+No kyphosis or scoliosis
+No supra or infra clavicular hallowing
+No drooping of shoulder or intercostal in drawing
+Apical impulse seen at the left 5th intercostal space half inch medial to midclavicular line</textarea>
+                    </div>
+
+                            <!-- Trachea Position -->
+                            <div class="exam-item mt-4">
+                                <h5>Trachea Position</h5>
+                                <div class="radio-group" style="display: flex; flex-direction: column; gap: 10px;">
+                                    <label style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa;">
+                                        <input type="radio" name="trachea_position" value="midline" checked> Appears to be in midline
+                                    </label>
+                                    <label style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa;">
+                                        <input type="radio" name="trachea_position" value="left"> Deviated to left side
+                                    </label>
+                                    <label style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa;">
+                                        <input type="radio" name="trachea_position" value="right"> Deviated to right side
+                                    </label>
+                    </div>
+                            </div>
+                        </div>
+
+                        <style>
+                            .inspection-textarea {
+                                font-family: inherit;
+                                resize: vertical;
+                                min-height: 300px;
+                                border: 1px solid #ddd;
+                                border-radius: 4px;
+                            }
+                            .inspection-textarea:focus {
+                                border-color: #80bdff;
+                                outline: 0;
+                                box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+                            }
+                            .radio-group label:hover {
+                                background-color: #e9ecef !important;
+                                cursor: pointer;
+                            }
+                            .radio-group input[type="radio"] {
+                                margin-right: 8px;
+                            }
+                        </style>
+
+                            <!-- Chest Movement -->
+                            <div class="exam-item mt-3">
+                                <h5>Chest Movement</h5>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="chest_movement" value="normal" checked> Moves equally with respiration</label>
+                                    <label><input type="radio" name="chest_movement" value="decreased_left"> Decreased movement on left side</label>
+                                    <label><input type="radio" name="chest_movement" value="decreased_right"> Decreased movement on right side</label>
+                    </div>
+                </div>
+
+                            <!-- Other Findings -->
+                            <div class="exam-item mt-3">
+                                <div class="checkbox-group">
+                                    <label><input type="checkbox" name="no_abnormal_findings" checked> No abnormal pulsations, dilated veins seen</label>
+                                    <label><input type="checkbox" name="no_scars_sinus" checked> No scars, sinus present</label>
+                                </div>
+                                <div id="abnormalLocationDiv" style="display: none; margin-top: 10px;">
+                                    <input type="text" name="abnormal_location" placeholder="Enter location of abnormal pulsations/scars/sinus" class="form-control">
+                            </div>
+                            </div>
+
+                            <script>
+                                // Toggle location input visibility based on either checkbox
+                                const noAbnormalFindings = document.querySelector('input[name="no_abnormal_findings"]');
+                                const noScarsSinus = document.querySelector('input[name="no_scars_sinus"]');
+                                const locationDiv = document.getElementById('abnormalLocationDiv');
+
+                                function updateLocationVisibility() {
+                                    locationDiv.style.display = (noAbnormalFindings.checked && noScarsSinus.checked) ? 'none' : 'block';
+                                }
+
+                                noAbnormalFindings.addEventListener('change', updateLocationVisibility);
+                                noScarsSinus.addEventListener('change', updateLocationVisibility);
+                            </script>
+                        </div>
+                    </div>
+
+                    <!-- Palpation Subsection -->
+                    <div class="subsection mt-5" style="border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div class="section-header">
+                            <h3>PALPATION</h3>
+                        </div>
+
+                        <!-- Basic Findings -->
+                        <div class="exam-group">
+                            <h4>Basic Findings</h4>
+                            <div class="exam-item">
+                                <div class="radio-group">
+                                    <label><input type="radio" name="trachea_palpation" value="midline" checked> Tracheal position is confirmed to be in midline</label>
+                                    <label><input type="radio" name="trachea_palpation" value="left"> Tracheal position is confirmed to be deviated to left side</label>
+                                    <label><input type="radio" name="trachea_palpation" value="right"> Tracheal position is confirmed to be deviated to right side</label>
+                                </div>
+                                <div class="checkbox-group mt-3">
+                                    <label><input type="checkbox" name="apex_beat_position" checked> Apex beat at left 5th intercostal space half inch medial to midclavicular line</label>
+                                </div>
+                                <div id="apexBeatLocationDiv" style="display: none; margin-top: 10px;">
+                                    <input type="text" name="apex_beat_location" placeholder="Enter location of apex beat" class="form-control">
+                            </div>
+
+                            <script>
+                                    // Toggle apex beat location input visibility
+                                    const apexBeatCheckbox = document.querySelector('input[name="apex_beat_position"]');
+                                    const apexBeatLocationDiv = document.getElementById('apexBeatLocationDiv');
+
+                                    function updateApexBeatVisibility() {
+                                        apexBeatLocationDiv.style.display = apexBeatCheckbox.checked ? 'none' : 'block';
+                                    }
+
+                                    apexBeatCheckbox.addEventListener('change', updateApexBeatVisibility);
+                            </script>
+                        </div>
+
+                        <!-- Chest Movement -->
+                        <div class="exam-group mt-4">
+                            <h4>Chest Movement</h4>
+                            <div class="exam-item">
+                                <div class="form-group">
+                                    <label>Total Chest Expansion:</label>
+                                    <div class="input-group">
+                                            <input type="number" name="chest_expansion" value="5" step="0.1" class="form-control">
+                                        <span class="unit">cm</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group mt-3">
+                                    <label>Hemithorax Expansion:</label>
+                                    <div class="expansion-inputs">
+                                        <div class="input-group">
+                                            <label>Right:</label>
+                                                <input type="number" name="right_expansion" value="2.5" step="0.1" class="form-control">
+                                            <span class="unit">cm</span>
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Left:</label>
+                                                <input type="number" name="left_expansion" value="2.5" step="0.1" class="form-control">
+                                            <span class="unit">cm</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="radio-group mt-3">
+                                    <label>Respiratory Movements:</label>
+                                        <label><input type="radio" name="resp_movement" value="normal" checked> Normal bilaterally</label>
+                                        <label><input type="radio" name="resp_movement" value="decreased_left"> Decreased on left side, normal on right side</label>
+                                    <label><input type="radio" name="resp_movement" value="decreased_right"> Decreased on right side, normal on left side</label>
+                                    <label><input type="radio" name="resp_movement" value="decreased_both"> Decreased bilaterally</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vocal Fremitus Table -->
+                        <div class="exam-group mt-4">
+                            <h4>Vocal Fremitus</h4>
+                            <div class="table-responsive">
+                                <table class="fremitus-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Region</th>
+                                            <th>Right</th>
+                                            <th>Left</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Directly on clavicle</td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Supra clavicular</td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Infra clavicular</td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mammary</td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Axillary</td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Infra axillary</td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Supra scapular</td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Inter scapular</td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Infra scapular</td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                            <td><select class="fremitus-select">
+                                                    <option value="normal" selected>Normal</option>
+                                                <option value="reduced">Reduced</option>
+                                                <option value="absent">Absent</option>
+                                                <option value="increased">Increased</option>
+                                            </select></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div> <!-- Close palpation subsection content -->
+                </div> <!-- Close palpation subsection -->
+
+                    <!-- Percussion Subsection -->
+                    <div class="subsection mt-5" style="border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div class="section-header">
+                            <h3>PERCUSSION</h3>
+                        </div>
+
+                        <!-- Lung Percussion Table -->
+                        <div class="exam-group">
+                            <h4>Lung</h4>
+                            <div class="table-responsive">
+                                <table class="percussion-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Region</th>
+                                            <th>Right</th>
+                                            <th>Left</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Directly on clavicle</td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Supra clavicular</td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Infra clavicular</td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mammary</td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Axillary</td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Infra axillary</td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Supra scapular</td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Inter scapular</td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Infra scapular</td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                            <td><select class="percussion-select">
+                                                <option value="resonant">Resonant</option>
+                                                <option value="dull">Dull</option>
+                                                <option value="impaired">Impaired</option>
+                                                <option value="stony-dull">Stony Dull</option>
+                                                <option value="hyper-resonant">Hyper-resonant</option>
+                                            </select></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Additional Percussion Findings -->
+                        <div class="exam-group mt-4">
+                            <div class="exam-item">
+                                <div class="form-group">
+                                    <label>Tidal percussion:</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="tidal_percussion" value="felt" checked> Felt</label>
+                                        <label><input type="radio" name="tidal_percussion" value="not_felt"> Not Felt</label>
+                                    </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label>Traube's space:</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="traubes_space" value="not_obliterated" checked> Not Obliterated</label>
+                                        <label><input type="radio" name="traubes_space" value="obliterated"> Obliterated</label>
+                                    </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label>Shifting dullness:</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="shifting_dullness" value="absent" checked> Absent</label>
+                                        <label><input type="radio" name="shifting_dullness" value="present"> Present</label>
+                                    </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label>Straight line dullness:</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="straight_line_dullness" value="absent" checked> Absent</label>
+                                        <label><input type="radio" name="straight_line_dullness" value="present"> Present</label>
+                                    </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label>Cardiac dullness:</label>
+                                    <div class="radio-group">
+                                    <label><input type="radio" name="cardiac_dullness" value="normal" checked> Both borders can be percussed</label>
+                                    <label><input type="radio" name="cardiac_dullness" value="left_border"> Left border cannot be percussed</label>
+                                    <label><input type="radio" name="cardiac_dullness" value="right_border"> Right border cannot be percussed</label>
+                                    <label><input type="radio" name="cardiac_dullness" value="both_borders"> Both borders cannot be percussed</label>
+                                    </div>
+                                    <input type="text" class="form-control mt-2" name="cardiac_dullness_notes" placeholder="Additional notes (if any)" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Auscultation Subsection -->
+                    <div class="subsection mt-5" style="border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div class="section-header">
+                            <h3>AUSCULTATION</h3>
+                        </div>
+                        <div class="auscultation-section">
+                            <h5>BREATH SOUNDS</h5>
+                            <table class="examination-table">
+                                <thead>
+                                    <tr>
+                                        <th>Region</th>
+                                        <th>Left</th>
+                                        <th>Right</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Directly on clavicle</td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Supra clavicular</td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Infra clavicular</td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mammary</td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Axillary</td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Infra axillary</td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Supra scapular</td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Inter scapular</td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Infra scapular</td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                        <td><select class="breath-sounds-select">
+                                            <option value="normal-vesicular">Normal Vesicular</option>
+                                            <option value="tubular">Tubular (Bronchial)</option>
+                                            <option value="cavernous">Cavernous (Bronchial)</option>
+                                            <option value="amphoric">Amphoric (Bronchial)</option>
+                                        </select></td>
+                                    </tr>
+                                                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="auscultation-section mt-4">
+                            <h5>ADDED SOUNDS</h5>
+                            <table class="examination-table">
+                                <thead>
+                                    <tr>
+                                        <th>Region</th>
+                                        <th>Left</th>
+                                        <th>Right</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Directly on clavicle</td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Supra clavicular</td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Infra clavicular</td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mammary</td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Axillary</td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Infra axillary</td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Supra scapular</td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Inter scapular</td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Infra scapular</td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                        <td><select class="added-sounds-select">
+                                            <option value="none">None</option>
+                                            <option value="crackles">Crackles</option>
+                                            <option value="crepitations">Crepitations</option>
+                                            <option value="ronchi">Ronchi</option>
+                                        <option value="wheeze">Wheeze</option>
+                                            <option value="pleural-rub">Pleural Rub</option>
+                                        </select></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                                                    </div>
+
+                        <div class="auscultation-section mt-4">
+                            <h5>VOCAL RESONANCE</h5>
+                            <table class="examination-table">
+                                <thead>
+                                    <tr>
+                                        <th>Region</th>
+                                        <th>Left</th>
+                                        <th>Right</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Directly on clavicle</td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Supra clavicular</td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Infra clavicular</td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mammary</td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Axillary</td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Infra axillary</td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Supra scapular</td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Inter scapular</td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Infra scapular</td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                        <td><select class="vocal-resonance-select">
+                                            <option value="normal">Normal</option>
+                                            <option value="increased">Increased</option>
+                                            <option value="reduced">Reduced</option>
+                                            <option value="absent">Absent</option>
+                                        </select></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                                            <div class="side-group">
+                                                <div class="checkbox-dropdown">
+                                <div class="dropdown-header"></div>
+                                                    <div class="dropdown-list">
+                                                        <label><input type="checkbox" name="vocal_right_clavicle"> Directly on clavicle</label>
+                                                        <label><input type="checkbox" name="vocal_right_supra_clavicular"> Supra clavicular</label>
+                                                        <label><input type="checkbox" name="vocal_right_infra_clavicular"> Infra clavicular</label>
+                                                        <label><input type="checkbox" name="vocal_right_mammary"> Mammary</label>
+                                                        <label><input type="checkbox" name="vocal_right_axillary"> Axillary</label>
+                                                        <label><input type="checkbox" name="vocal_right_infra_axillary"> Infra axillary</label>
+                                                        <label><input type="checkbox" name="vocal_right_supra_scapular"> Supra scapular</label>
+                                                        <label><input type="checkbox" name="vocal_right_inter_scapular"> Inter scapular</label>
+                                                        <label><input type="checkbox" name="vocal_right_infra_scapular"> Infra scapular</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            // Toggle abnormal regions display
+                            document.querySelector('input[name="all_normal_breath_sounds"]').addEventListener('change', function() {
+                                const abnormalRegions = this.closest('.checkbox-group').querySelector('.abnormal-regions');
+                                abnormalRegions.style.display = this.checked ? 'none' : 'block';
+                                if (this.checked) {
+                                    abnormalRegions.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                                        cb.checked = false;
+                                    });
+                                }
+                            });
+
+                            document.querySelector('input[name="all_normal_vocal_resonance"]').addEventListener('change', function() {
+                                const abnormalRegions = this.closest('.checkbox-group').querySelector('.abnormal-regions');
+                                abnormalRegions.style.display = this.checked ? 'none' : 'block';
+                                if (this.checked) {
+                                    abnormalRegions.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                                        cb.checked = false;
+                                    });
+                                }
+                            });
+
+                            // Toggle dropdown lists
+                            document.querySelectorAll('.checkbox-dropdown').forEach(dropdown => {
+                                const header = dropdown.querySelector('.dropdown-header');
+                                const list = dropdown.querySelector('.dropdown-list');
+                                
+                                header.addEventListener('click', () => {
+                                    list.style.display = list.style.display === 'none' ? 'block' : 'none';
+                                });
+
+                                // Update header text when checkboxes change
+                                const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+                                checkboxes.forEach(checkbox => {
+                                    checkbox.addEventListener('change', () => {
+                                        const checkedCount = [...checkboxes].filter(cb => cb.checked).length;
+                                        header.textContent = checkedCount > 0 ? `${checkedCount} location(s) selected` : 'Select Locations';
+                                    });
+                                });
+
+                                // Close dropdown when clicking outside
+                                document.addEventListener('click', (e) => {
+                                    if (!dropdown.contains(e.target)) {
+                                        list.style.display = 'none';
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+
+                <!-- Other Systems Section -->
+                <div id="otherSystemsSection" class="subsection mt-5" style="border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); max-width: 1200px; margin: 0 auto;">
+                    <div class="section-header">
+                        <h3>Other Systems <span class="text-muted">(do not edit unless other system involvement are there)</span></h3>
+                        <div class="alert alert-info" style="padding: 10px; margin-top: 10px;">
+                            <i class="fas fa-info-circle"></i> Note: You should manually write other system findings here if present
+                        </div>
+                    </div>
+
+                    <div class="exam-group">
+                        <div class="form-group">
+                            <label>CVS Examination:</label>
+                            <textarea class="form-control" name="cvs_examination" rows="2">S1 and S2 heard, no added sounds</textarea>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label>CNS Examination:</label>
+                            <textarea class="form-control" name="cns_examination" rows="2">No focal neurological deficit</textarea>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label>Abdomen Examination:</label>
+                            <textarea class="form-control" name="abdomen_examination" rows="2">Soft, non-tender, no organomegaly, no fluid thrill</textarea>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- Probable Diagnosis Section -->
+                <div id="provisionalDiagnosisSection" class="subsection mt-4" style="border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div class="section-header">
+                    <h3>Probable Diagnosis</h3>
+                        <button type="button" class="btn btn-primary" onclick="generateDiagnosis()">
+                            <i class="fas fa-stethoscope"></i> Generate Diagnosis
+                        </button>
+                    </div>
+
+                    <div class="exam-group">
+                        <div class="form-group">
+                            <textarea class="form-control" id="provisional_diagnosis" name="provisional_diagnosis" rows="3" placeholder="Generated diagnosis will appear here. You can edit it if needed."></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Generate Button -->
+                <div class="button-group text-center mt-4 mb-5" id="generateBtnContainer">
+                    <button type="button" id="generateBtn" class="btn btn-primary">
+                        <i class="fas fa-file-medical"></i> Generate Case Sheet
+                    </button>
+                </div>
+            </form>
+
+            <!-- Output Section -->
+            <div id="outputSection" style="display: none; max-width: 1200px; margin: 0 auto;">
+                <div class="output-header d-flex justify-content-between align-items-center mb-4">
+                    <h2 style="margin: 0;">Generated Case Sheet</h2>
+                    <div class="button-group">
+                        <button type="button" id="editBtn" class="btn btn-secondary me-2">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button type="button" id="downloadBtn" class="btn btn-primary">
+                            <i class="fas fa-download"></i> Download PDF
+                        </button>
+                    </div>
+                </div>
+                <div id="caseSheetOutput" style="background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div id="caseSheetContent" style="margin: 0; padding: 40px; font-family: 'Segoe Print', 'Bradley Hand', cursive; color: #444; line-height: 1.8; font-size: 16px; border: 1px solid #dee2e6; border-radius: 8px; min-height: 500px;"></div>
+                </div>
+            </div>
+
+            <!-- Complaint History Dialog -->
+            <div class="complaint-dialog" id="complaintHistoryDialog">
+                <div class="complaint-dialog-content">
+                    <h3>Select Complaint to Add History</h3>
+                    <div class="complaint-options">
+                        <div class="complaint-option" data-complaint="Cough">Cough</div>
+                        <div class="complaint-option" data-complaint="Fever">Fever</div>
+                        <div class="complaint-option" data-complaint="Breathlessness">Breathlessness</div>
+                        <div class="complaint-option" data-complaint="Chest Pain">Chest Pain</div>
+                        <div class="complaint-option" data-complaint="Hemoptysis">Hemoptysis</div>
+                        <div class="complaint-option" data-complaint="Wheeze">Wheeze</div>
+                        <div class="complaint-option" data-complaint="Loss of Weight">Loss of Weight</div>
+                        <div class="complaint-option" data-complaint="Loss of Appetite">Loss of Appetite</div>
+                        <div class="complaint-option" data-complaint="Other">Other Complaint...</div>
+                    </div>
+                    <div class="dialog-buttons">
+                        <button class="dialog-close" onclick="closeComplaintDialog()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="respiratory.js"></script>
+    <script src="respiratory-generator.js"></script>
+    <script src="diagnosis.js"></script>
+</body>
+</html> 
